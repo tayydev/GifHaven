@@ -1,0 +1,14 @@
+{
+  "name": "gifhaven",
+  "version": "1.0.0",
+  "description": "the ultimate gif management tool",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "NathanNorth",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^17.0.0"
+  }
+}
