@@ -11,6 +11,7 @@
     - automatic local downloads
     - drag and drop files
     - copy and past links (and files?)
+    - duplicate detection
  - gifs must be easy to discover
     - your existing gifs must be searchable **fast**
     - must also be able to search external services (potentially multiple)
