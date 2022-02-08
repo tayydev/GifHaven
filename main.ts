@@ -1,13 +1,17 @@
 import { app, BrowserWindow } from 'electron'
+import * as path from "path"
 
 //create a new default window
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 600,
-        height: 1000
+        height: 1000,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
     })
 
-    win.loadFile('index.html')
+    win.loadFile('../index.html')  
 }
 //called once electron has loaded all components of the app
 app.whenReady().then(() =>{

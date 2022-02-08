@@ -4,11 +4,13 @@
   "description": "the ultimate gif management tool",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "build": "tsc --resolveJsonModule",
+    "start": "npm run build && electron ./build/main.js"
   },
   "author": "NathanNorth",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^17.0.0"
+    "electron": "^17.0.0",
+    "typescript": "^4.5.5"
   }
 }
