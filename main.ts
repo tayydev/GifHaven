@@ -1,5 +1,7 @@
-import { app, BrowserWindow } from 'electron'
-import * as path from "path"
+import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron'
+import * as path from 'path'
+import { IO } from './io'
+import { Library } from './library'
 
 //create a new default window
 const createWindow = () => {
@@ -11,7 +13,11 @@ const createWindow = () => {
         }
     })
 
-    win.loadFile('../index.html')  
+   win.loadFile('../index.html')
+
+   const io: IO = new IO(app.getPath('userData'))
+   const library: Library = new Library(io)
+   library.draw()
 }
 //called once electron has loaded all components of the app
 app.whenReady().then(() =>{
