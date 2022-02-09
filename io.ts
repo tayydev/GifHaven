@@ -1,7 +1,22 @@
+import * as path from 'path'
 import * as fs from 'fs'
 
-function getFiles(path: fs.PathLike) {
-    const directory = fs.readdir(path, (err, files) => {
-        console.log(files)
-    })
+export class IO {
+    home: fs.PathLike;
+    constructor(home: fs.PathLike) {
+        this.home = home;
+    }
+
+    public getGifs(): string[] {
+        const directory = IO.makeIfNotExists(path.join(this.home.toString(), './store'))
+        return fs.readdirSync(directory).filter(str => str.endsWith('.gif')) //todo sort in correct order
+    }
+
+    private static makeIfNotExists(path: fs.PathLike): fs.PathLike {
+        if(!fs.existsSync(path)) {
+            fs.mkdirSync(path)
+        }
+        console.log("Making folder: " + path)
+        return path
+    }
 }

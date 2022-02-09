@@ -1,8 +1,10 @@
 import { version as appVersion } from './package.json' //read version from json
 
-//inject versions
 window.addEventListener('DOMContentLoaded', () => {
-    const replaceText = (selector, text) => {
+    versionInjection()
+})
+function versionInjection() {
+    const replaceText = (selector: string, text :string) => {
         const element = document.getElementById(selector)
         if(element) element.innerHTML = text
     }
@@ -12,4 +14,4 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     replaceText('gifhaven-version', appVersion)
-})
+}
