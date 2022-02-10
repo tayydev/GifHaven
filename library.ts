@@ -7,6 +7,7 @@ export class Library {
         const files = this.io.getGifs()
         const library = document.getElementById('library')
         for(const gif of files) {
+            console.log("Found gif: " + gif)
             const img = document.createElement('img')
             img.src = gif
             library.appendChild(img)

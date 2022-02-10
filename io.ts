@@ -4,13 +4,18 @@ import { ipcRenderer } from 'electron';
 
 export class IO {
     home: fs.PathLike;
+    store: fs.PathLike;
     constructor(appData: fs.PathLike) {
         this.home = path.join(appData.toString(), './GifHaven'); //todo is roaming OK?
+        this.store = path.join(this.home.toString(), './Store')
     }
 
     public getGifs(): string[] {
-        const directory = IO.makeIfNotExists(path.join(this.home.toString(), './store'))
-        return fs.readdirSync(directory).filter(str => str.endsWith('.gif')) //todo sort in correct order
+        const directory = IO.makeIfNotExists(this.store)
+        console.log("Directory is " + directory)
+        return fs.readdirSync(directory)
+            .filter(str => str.endsWith('.gif'))
+            .map(str => path.join(this.store.toString(), str))
     }
 
     private static makeIfNotExists(path: fs.PathLike): fs.PathLike {
