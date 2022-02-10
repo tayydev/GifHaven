@@ -1,17 +1,10 @@
-import { ipcRenderer } from 'electron'
+import { Library } from './library'
 import { version as appVersion } from './package.json' //read version from json
 
 window.addEventListener('DOMContentLoaded', () => {
     versionInjection()
-    const string: String = ipcRenderer.sendSync('get-message')
-
-    console.log(string)
-
-    // while(true) {
-    //     ipcRenderer.invoke('get-message', (event, reply) => {
-    //         gifInjection(reply)
-    //     })
-    // }
+    const library: Library = new Library();
+    library.draw()
 })
 function versionInjection() {
     const replaceText = (selector: string, text :string) => {

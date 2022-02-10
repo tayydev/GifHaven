@@ -1,7 +1,5 @@
 import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron'
 import * as path from 'path'
-import { IO } from './io'
-import { Library } from './library'
 
 //create a new default window
 const createWindow = () => {
@@ -28,6 +26,6 @@ app.on('window-all-closed', () => {
     app.quit()
 })
 //register this first
-ipcMain.on('get-message', (event, arg) => {
-    event.returnValue = 'ping'
+ipcMain.on('get-path', (event, arg) => {
+    event.returnValue = app.getPath('appData')
 })

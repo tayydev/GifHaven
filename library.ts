@@ -1,10 +1,7 @@
 import { IO } from "./io"
 
 export class Library {
-    io: IO
-    constructor(io: IO) {
-        this.io = io
-    }
+    io: IO = IO.build()
     
     public draw() {
         const files = this.io.getGifs()
