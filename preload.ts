@@ -1,7 +1,17 @@
+import { ipcRenderer } from 'electron'
 import { version as appVersion } from './package.json' //read version from json
 
 window.addEventListener('DOMContentLoaded', () => {
     versionInjection()
+    const string: String = ipcRenderer.sendSync('get-message')
+
+    console.log(string)
+
+    // while(true) {
+    //     ipcRenderer.invoke('get-message', (event, reply) => {
+    //         gifInjection(reply)
+    //     })
+    // }
 })
 function versionInjection() {
     const replaceText = (selector: string, text :string) => {
@@ -14,4 +24,7 @@ function versionInjection() {
     }
 
     replaceText('gifhaven-version', appVersion)
+}
+function gifInjection(returned: string) {
+    console.log(returned)
 }

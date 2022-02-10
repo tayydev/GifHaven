@@ -15,9 +15,9 @@ const createWindow = () => {
 
    win.loadFile('../index.html')
 
-   const io: IO = new IO(app.getPath('userData'))
-   const library: Library = new Library(io)
-   library.draw()
+//    const io: IO = new IO(app.getPath('userData'))
+//    const library: Library = new Library(io)
+//    library.draw()
 }
 //called once electron has loaded all components of the app
 app.whenReady().then(() =>{
@@ -26,4 +26,8 @@ app.whenReady().then(() =>{
 //called when all windows are closed
 app.on('window-all-closed', () => {
     app.quit()
+})
+//register this first
+ipcMain.on('get-message', (event, arg) => {
+    event.returnValue = 'ping'
 })
