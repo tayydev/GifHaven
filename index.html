@@ -13,12 +13,22 @@
     <body>
         <h1>Hello world!</h1>
         <input type="button" id="upload" value="Upload"/>
+        <input type="button" id="open-about" value="About"/>
+        <input type="button" id="open-settings" value="Settings"/>
         <div id ="display"></div>
-        <div id="about" class="popup"> <!--todo make this class work-->
+
+        <div id="blur"></div>
+        <div id="about" class="popup">
             GifHaven version <span id="gifhaven-version"></span>, 
             Chromium version <span id="chrome-version"></span>, 
             Node version <span id="node-version"></span>, 
             Electron version <span id="electron-version"></span>
+            <input type="button" class="close-popup" value="Close"/>
+        </div>
+        <div id="settings" class="popup">
+            Current library location: <span id="library-location"></span>
+            <input type="button" id="change-directory" value="Change">
+            <input type="button" class="close-popup" value="Close"/>
         </div>
     </body>
 </html>

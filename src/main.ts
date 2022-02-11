@@ -23,14 +23,25 @@ app.whenReady().then(() =>{
 app.on('window-all-closed', () => {
     app.quit()
 })
-//register this first
 ipcMain.on('get-path', (event, arg) => {
     event.returnValue = app.getPath('appData')
 })
+ipcMain.on('reload', (event, arg) => {
+    win.reload()
+    event.returnValue = true
+});
 ipcMain.on('select-file', (event, arg) => {
     event.returnValue = dialog.showOpenDialogSync(win, {
+        message: 'Select gifs to import',
         defaultPath: app.getPath('downloads'),
         filters: [{name: 'Compatible Files', extensions: ['gif']}],
         properties: ['openFile'] //todo support multi files
+    })
+})
+ipcMain.on('select-directory', (event, arg) => {
+    event.returnValue =  dialog.showOpenDialogSync(win, {
+        message: 'Select a directory for your gif library',
+        defaultPath: arg, //io passes us a default directory (in this case %appdata%/roaming/gifhaven/store)
+        properties: ['openDirectory'] //todo support multi files
     })
 })

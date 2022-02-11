@@ -3,11 +3,13 @@ import { version as appVersion } from '../package.json' //read version from json
 import { contextBridge, ipcRenderer } from 'electron';
 import { IO } from './io';
 
-const io: IO = IO.build() //shared io instance
-const display: DisplayPane = new DisplayPane(io)
+//don't initially create these because io creation requires setting a config
+const io: IO = IO.build(); 
+const display: DisplayPane = new DisplayPane(io);
 
 window.addEventListener('DOMContentLoaded', () => {
     versionInjection()
+
     display.draw()
 })
 function versionInjection() {
@@ -21,6 +23,7 @@ function versionInjection() {
     }
 
     replaceText('gifhaven-version', appVersion)
+    replaceText('library-location', io.config.library)
 }
 contextBridge.exposeInMainWorld('api', {
     upload: () => {
@@ -28,5 +31,11 @@ contextBridge.exposeInMainWorld('api', {
         if(files == undefined) return;
         const gif = io.import(files[0])
         display.add(gif)
+    },
+    changeLibraryLocation: () => {
+        io.changeConfig()
+    },
+    import: (loc) => {
+        display.add(io.import(loc))
     }
 })
