@@ -2,6 +2,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { dialog, ipcRenderer } from 'electron';
 import { Library } from './data/library';
+import { Gif } from './data/gif';
 
 export class IO {
     home: fs.PathLike;
@@ -9,16 +10,8 @@ export class IO {
     library: fs.PathLike;
     constructor(appData: fs.PathLike) {
         this.home = path.join(appData.toString(), './GifHaven'); //todo is roaming OK?
-        this.store = path.join(this.home.toString(), './Store');
+        this.store = IO.makeIfNotExists(path.join(this.home.toString(), './Store'));
         this.library = path.join(this.store.toString(), './library.json');
-    }
-
-    public getGifs(): string[] {
-        const directory = IO.makeIfNotExists(this.store)
-        console.log("Directory is " + directory)
-        return fs.readdirSync(directory)
-            .filter(str => str.endsWith('.gif'))
-            .map(str => path.join(this.store.toString(), str))
     }
 
     public getLibrary(): Library {
@@ -33,8 +26,22 @@ export class IO {
         fs.writeFileSync(this.library, JSON.stringify(library))
     }
 
-    public upload(): void {
-        
+    public import(loc: string): Gif {
+        const base = path.basename(loc)
+        const destination = IO.getUnique(path.join(this.store.toString(), base))
+        fs.copyFileSync(loc, destination)
+        return new Gif(destination, base, Date.now());
+    }
+
+    private static getUnique(destination: string): string {
+        if(fs.existsSync(destination)) {
+            //insert one underscore
+            var baseNoDot = path.basename(destination, 'gif')
+            baseNoDot = baseNoDot.substring(0, baseNoDot.length - 1)
+            const extension = path.extname(destination)
+            return IO.getUnique(path.join(path.dirname(destination), baseNoDot + '0' + extension))
+        }
+        return destination;
     }
 
     private static makeIfNotExists(path: fs.PathLike): fs.PathLike {

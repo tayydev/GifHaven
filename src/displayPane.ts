@@ -8,19 +8,27 @@ export class DisplayPane {
     }
 
     public draw() {
-        const files = this.io.getGifs()
+        //clear
         const library = document.getElementById('display')
-        for(const gif of files) {
+        while(library.firstChild) {
+            library.removeChild(library.firstChild)
+        }
+
+        //draw
+        const gifs = this.io.getLibrary().gifs.sort((a, b) => b.timestamp - a.timestamp)
+        for(const gif of gifs) {
             console.log("Found gif: " + gif)
             const img = document.createElement('img')
-            img.src = gif
+            img.src = gif.path
             library.appendChild(img)
         }
     }
 
     public add(gif: Gif): void {
         const lib = this.io.getLibrary()
-        lib.gifs.push(gif)
+        lib.gifs.unshift(gif)
         this.io.writeLibrary(lib)
+
+        this.draw()
     }
 }
