@@ -4,8 +4,8 @@
   "description": "the ultimate gif management tool",
   "main": "main.js",
   "scripts": {
-    "build": "tsc --resolveJsonModule",
-    "start": "npm run build && electron ./build/main.js"
+    "build": "tsc --resolveJsonModule --allowJs",
+    "start": "npm run build && electron ./build/src/main.js"
   },
   "author": "NathanNorth",
   "license": "MIT",

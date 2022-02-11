@@ -11,11 +11,7 @@ const createWindow = () => {
         }
     })
 
-   win.loadFile('../index.html')
-
-//    const io: IO = new IO(app.getPath('userData'))
-//    const library: Library = new Library(io)
-//    library.draw()
+   win.loadFile('../../index.html')
 }
 //called once electron has loaded all components of the app
 app.whenReady().then(() =>{
