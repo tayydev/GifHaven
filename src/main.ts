@@ -46,6 +46,9 @@ ipcMain.on('select-directory', (event, arg) => {
     })
 })
 ipcMain.on('ondragstart', (event, dir) => {
+
+    console.log("Directory is: " + dir)
+
     event.sender.startDrag({
         file: dir,
         icon: path.join(__dirname, '../../img/dragIcon.png') //todo this icon sucks

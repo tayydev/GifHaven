@@ -11,6 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
     versionInjection()
     replaceText('library-location', io.config.library)
     display.draw()
+    attachGifDrags()
 })
 //replace text of a given element
 function replaceText(selector: string, text :string) {
@@ -33,6 +34,7 @@ contextBridge.exposeInMainWorld('api', {
         if(files == undefined) return;
         const gif = io.importGif(files[0])
         display.add(gif)
+        attachGifDrags()
     },
     //change the location of your library
     changeLibraryLocation: () => {
@@ -42,8 +44,19 @@ contextBridge.exposeInMainWorld('api', {
     import: (loc) => {
         const gif = io.importGif(loc);
         display.add(gif)
-    },
-    startDrag: (path) => {
-        ipcRenderer.send('ondragstart', path)
+        attachGifDrags()
     }
 })
+const attachGifDrags = () => {
+    //attach file drags
+    const gifs = document.getElementsByClassName('gif')
+    for(var i = 0; i < gifs.length; i++) {
+        console.log("setting up document drags")
+        const path = gifs[i].getAttribute('data-path');
+        (gifs[i] as any).ondragstart = (event) => {
+            console.log('Drag start!');
+            event.preventDefault()
+            ipcRenderer.send('ondragstart', path)
+        }
+    }
+}

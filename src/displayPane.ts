@@ -15,7 +15,7 @@ export class DisplayPane {
         }
 
         //draw
-        const gifs = this.io.getLibrary().gifs.sort((a, b) => b.timestamp - a.timestamp)
+        const gifs = this.io.getLibrary().gifs.sort((a, b) => b.timestamp - a.timestamp) //reverse chronological
         for(const gif of gifs) {
             console.log("Found gif: " + gif)
             const img = document.createElement('img')
