@@ -31,6 +31,15 @@ window.onload = () => { //wait for dom to load
             }
         });
     }
+
+    const gifs = document.getElementsByClassName('gif')
+    for(var i = 0; i < gifs.length; i++) {
+        const path = gifs[i].getAttribute('data-path')
+        gifs[i].ondragstart = (event) => {
+            event.preventDefault()
+            window.api.startDrag(path)
+        }
+    }
 }
 
 //drag and drop

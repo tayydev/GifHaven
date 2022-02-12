@@ -19,14 +19,16 @@ export class DisplayPane {
         for(const gif of gifs) {
             console.log("Found gif: " + gif)
             const img = document.createElement('img')
+            img.classList.add('gif')
             img.src = gif.path
+            img.setAttribute('data-path', gif.path)
             library.appendChild(img)
         }
     }
 
     public add(gif: Gif): void {
         const lib = this.io.getLibrary()
-        lib.gifs.unshift(gif)
+        lib.gifs.unshift(gif) //addFirst equivalent
         this.io.writeLibrary(lib)
 
         this.draw()

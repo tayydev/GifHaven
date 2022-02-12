@@ -3,39 +3,47 @@ import { version as appVersion } from '../package.json' //read version from json
 import { contextBridge, ipcRenderer } from 'electron';
 import { IO } from './io';
 
-//don't initially create these because io creation requires setting a config
-const io: IO = IO.build(); 
+const io: IO = new IO()
 const display: DisplayPane = new DisplayPane(io);
 
+//run on load
 window.addEventListener('DOMContentLoaded', () => {
     versionInjection()
-
+    replaceText('library-location', io.config.library)
     display.draw()
 })
+//replace text of a given element
+function replaceText(selector: string, text :string) {
+    const element = document.getElementById(selector)
+    if(element) element.innerHTML = text
+}
+//do specific text replaces for the about popup
 function versionInjection() {
-    const replaceText = (selector: string, text :string) => {
-        const element = document.getElementById(selector)
-        if(element) element.innerHTML = text
-    }
-
     for(const version of ['chrome', 'node', 'electron']) {
         replaceText(`${version}-version`, process.versions[version])
     }
 
     replaceText('gifhaven-version', appVersion)
-    replaceText('library-location', io.config.library)
 }
+//expose methods to render.js
 contextBridge.exposeInMainWorld('api', {
+    //add a new gif from a file
     upload: () => {
         const files: string[] = ipcRenderer.sendSync('select-file')
         if(files == undefined) return;
-        const gif = io.import(files[0])
+        const gif = io.importGif(files[0])
         display.add(gif)
     },
+    //change the location of your library
     changeLibraryLocation: () => {
-        io.changeConfig()
+        io.changeLibraryLocation()
     },
+    //add a new gif from a drag and drop
     import: (loc) => {
-        display.add(io.import(loc))
+        const gif = io.importGif(loc);
+        display.add(gif)
+    },
+    startDrag: (path) => {
+        ipcRenderer.send('ondragstart', path)
     }
 })
