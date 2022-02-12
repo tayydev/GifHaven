@@ -51,6 +51,10 @@ window.onload = () => { //wait for dom to load
         console.log('drag over!')
     });
 
+    document.getElementById('search').addEventListener('input', () => {
+        win.api.search()
+    }, false)
+
     //todo these are not consistent and need work
     document.addEventListener('dragenter', (event) => {
         console.log('File is in the Drop Space');
