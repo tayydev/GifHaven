@@ -1,10 +1,11 @@
 img.gif {
-    outline: 2px solid black;
-    border-radius: 5px;
+    border: 2px solid black;
     margin: 0 auto; /* center images */
 
     min-width: 100%;
     max-width: 100%; /* don't overflow available space */
+
+    box-sizing: border-box; /* keeps border from creating a horizontal scrollbar in the search-containers */
 }
 .popup {
     visibility: hidden; /* popups are invisible by default */
@@ -13,10 +14,10 @@ img.gif {
     top: 20%; /* more space for the head */
     left: 5%; /* since gifhaven is a vertically designed app we leave less room for left and right */
     right: 5%;
+    bottom: 20%;
 
     padding: 10px;
-    border-radius: 5px;
-    outline: 2px solid black;
+    border: 2px solid black;
 
     background-color: lightgrey;
 }
@@ -31,4 +32,19 @@ img.gif {
 
     background-color: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(2px);
+}
+#search-container-container {
+    height: 100%; 
+    position: relative;
+}
+#search-container {
+    position: absolute;
+    top: 25px; /* whatever height of search bar is */
+    bottom: 5%; /* padding at bottom */
+    overflow: hidden;
+}
+#search-results {
+    position: relative;
+    max-height: 100%;
+    overflow: auto;
 }
