@@ -2,9 +2,11 @@ import { DisplayPane } from './displayPane'
 import { version as appVersion } from '../package.json' //read version from json
 import { contextBridge, ipcRenderer } from 'electron';
 import { IO } from './io';
+import { TenorPane } from './tenorPane';
 
 const io: IO = new IO()
 const display: DisplayPane = new DisplayPane(io);
+const search: TenorPane = new TenorPane();
 
 //run on load
 window.addEventListener('DOMContentLoaded', () => {
@@ -47,6 +49,10 @@ contextBridge.exposeInMainWorld('api', {
     },
     search: () => {
         updateGifs()
+    },
+    onlineSearch: () => {
+        const text = (document.getElementById('online-search') as HTMLInputElement).value
+        search.drawTenor(text)
     }
 })
 const updateGifs = () => {
