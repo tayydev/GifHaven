@@ -1,11 +1,11 @@
 export class Gif {
     //required
-    path: string
-    name: string
-    timestamp: number
+    readonly path: string
+    readonly name: string
+    readonly timestamp: number
 
     //optional
-    link: string = ""
+    readonly link: string
 
     constructor(path: string, name: string, timestamp: number, link: string = "") {
         this.path = path;

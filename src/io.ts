@@ -9,7 +9,7 @@ export class IO {
     private gifHaven: fs.PathLike;
     private defaultStore: fs.PathLike;
     private configPath: fs.PathLike;
-    config: Config
+    readonly config: Config
     private userStore: fs.PathLike;
     private libraryJson: string
     constructor() {
