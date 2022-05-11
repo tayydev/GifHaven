@@ -1,17 +1,13 @@
-import { Gif } from "./data/gif"
 import { IO } from "./io"
 import {Display} from "./display";
+import {Gif} from "./data/gif";
 
 export class LocalSearchableDisplay extends Display {
-    private readonly io: IO;
-    private readonly search: HTMLInputElement
-    constructor(output: HTMLElement, search: HTMLInputElement, io: IO) {
-        super(output);
-
-        console.log(search)
+    private readonly search: HTMLInputElement //element to read search filters from
+    constructor(output: HTMLElement, io: IO, search: HTMLInputElement) {
+        super(output, io);
 
         this.search = search;
-        this.io = io;
     }
 
     public draw() {
@@ -26,9 +22,32 @@ export class LocalSearchableDisplay extends Display {
         super.draw(gifs)
     }
 
-    public add(gif: Gif): void {
-        const lib = this.io.getLibrary()
-        lib.gifs.unshift(gif) //addFirst equivalent
-        this.io.writeLibrary(lib)
+
+    protected override makeImg(gif: Gif): HTMLElement {
+        const div = document.createElement('div')
+        div.classList.add('gif-container')
+
+        const button = document.createElement('input')
+        button.type = 'button'
+        button.value = 'Options'
+        button.classList.add('gif-button')
+
+        const img = super.makeImg(gif);
+
+        div.appendChild(img)
+        div.appendChild(button)
+
+        this.applyGifListener(div, button)
+
+        return div
+    }
+
+    private applyGifListener(div: HTMLElement, button: HTMLButtonElement) {
+        div.addEventListener('mouseenter', () => {
+            button.style.visibility = 'visible'
+        })
+        div.addEventListener('mouseleave', () => {
+            button.style.visibility = 'hidden'
+        })
     }
 }

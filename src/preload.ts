@@ -16,15 +16,15 @@ class Preload {
     public static init() {
         this.display = new LocalSearchableDisplay(
             document.getElementById('display'),
+            this.io,
             document.getElementById('search') as HTMLInputElement,
-            this.io
         );
         this.search = new TenorPane(
             document.getElementById('search-results')
         );
 
         Preload.versionInjection()
-        Preload.replaceText('library-location', this.io.config.library)
+        Preload.replaceText('library-location', this.io.getConfig().libraryPath)
         Preload.updateGifs()
 
         Preload.exposeBridge()
@@ -49,10 +49,10 @@ class Preload {
         //attach file drags
         const gifs = Object.values(document.getElementsByClassName('gif'))
         gifs.forEach(gif => {
-            const path = gif.getAttribute('data-path'); //todo this needs to be rethought
+            const dest: string = this.io.makePathFull(gif.getAttribute('data-path'));
             (gif as any).ondragstart = (event) => { //todo cast as any is bad
                 event.preventDefault()
-                ipcRenderer.send('ondragstart', path)
+                ipcRenderer.send('ondragstart', dest)
             }
         })
     }
@@ -65,7 +65,7 @@ class Preload {
                 const files: string[] = ipcRenderer.sendSync('select-file')
                 if(files == undefined) return;
                 const gif = this.io.importGif(files[0])
-                this.display.add(gif)
+                this.io.addGif(gif)
                 Preload.updateGifs()
             },
             //change the location of your library
@@ -75,8 +75,11 @@ class Preload {
             //add a new gif from a drag and drop
             import: (loc) => {
                 const gif = this.io.importGif(loc);
-                this.display.add(gif)
+                this.io.addGif(gif)
                 Preload.updateGifs()
+            },
+            open: (loc) => {
+                ipcRenderer.sendSync('open-loc')
             },
             search: () => {
                 Preload.updateGifs()

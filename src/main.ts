@@ -30,6 +30,10 @@ ipcMain.on('reload', (event, arg) => {
     win.reload()
     event.returnValue = true
 });
+ipcMain.on('open-loc', (event, arg) => {
+    console.log('Placeholder open!')
+    event.returnValue = null
+})
 ipcMain.on('select-file', (event, arg) => {
     event.returnValue = dialog.showOpenDialogSync(win, {
         message: 'Select gifs to import',

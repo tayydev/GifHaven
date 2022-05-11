@@ -7,6 +7,9 @@ class Renderer {
         this.initPopups()
 
         //special buttons
+        document.getElementById('view-directory').addEventListener('click', () => {
+            win.api.open();
+        })
         document.getElementById('upload').addEventListener('click', () => {
             win.api.upload();
         });
@@ -63,24 +66,18 @@ class Renderer {
             const id = popup.id.replace("open-", "") //find parent by removing open
             const parent = document.getElementById(id)
             popup.addEventListener('click', () => {
-                this.activatePopup(parent, blur)
+                blur.style.visibility = 'visible';
+                parent.style.visibility = 'visible';
+                this.currentPopup = parent
             })
         })
 
         const closes = Object.values(document.getElementsByClassName('close-popup'))
         closes.forEach(close => {
             close.addEventListener('click', () => {
-                this.deactivatePopup(blur)
+                blur.style.visibility = 'hidden';
+                this.currentPopup.style.visibility = 'hidden';
             })
         })
-    }
-    private static activatePopup(popup: HTMLElement, blur: HTMLElement) {
-        blur.style.visibility = 'visible';
-        popup.style.visibility = 'visible';
-        this.currentPopup = popup
-    }
-    private static deactivatePopup(blur: HTMLElement) {
-        blur.style.visibility = 'hidden';
-        this.currentPopup.style.visibility = 'hidden';
     }
 }

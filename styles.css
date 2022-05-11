@@ -6,6 +6,20 @@ img.gif {
     max-width: 100%; /* don't overflow available space */
 
     box-sizing: border-box; /* keeps border from creating a horizontal scrollbar in the search-containers */
+
+    overflow: visible;
+}
+.gif-container {
+    position: relative;
+}
+.gif-button {
+    position: absolute;
+    width: 10%;
+    height: 10%;
+    bottom: 8px;
+    right: 4px;
+
+    visibility: hidden;
 }
 .popup {
     visibility: hidden; /* popups are invisible by default */

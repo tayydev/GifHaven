@@ -6,30 +6,37 @@ import { Gif } from './data/gif';
 import { Config } from './data/config';
 
 export class IO {
-    private gifHaven: fs.PathLike;
-    private defaultStore: fs.PathLike;
-    private configPath: fs.PathLike;
-    readonly config: Config
-    private userStore: fs.PathLike;
-    private libraryJson: string
+    private readonly homePath: fs.PathLike;
+    private readonly storePath: fs.PathLike;
+    private readonly configPath: fs.PathLike;
+    private readonly config: Config
+    private readonly userStore: fs.PathLike;
+    private readonly libraryJson: string
+
     constructor() {
         const appData: string = ipcRenderer.sendSync('get-path') //get appdata folder from main.js
 
-        this.gifHaven = IO.makeDirIfNotExists(path.join(appData.toString(), './GifHaven/')); //gifhaven is %appdata%/gifhaven
-        this.defaultStore = IO.makeDirIfNotExists(path.join(appData.toString(), './GifHaven/Store')); //we create a default store directory
-        this.configPath = path.join(this.gifHaven.toString(), './config.json') //we save where our non-moving config file is
+        this.homePath = IO.makeDirIfNotExists(path.join(appData.toString(), './GifHaven/')); //gifhaven is %appdata%/gifhaven
+        this.storePath = IO.makeDirIfNotExists(path.join(appData.toString(), './GifHaven/Store')); //we create a default store directory
+        this.configPath = path.join(this.homePath.toString(), './config.json') //we save where our non-moving config file is
         if(fs.existsSync(this.configPath)) {
             console.log("Config found!")
             this.config = JSON.parse(fs.readFileSync(this.configPath, 'utf-8'))
         }
         else {
             console.log("Making new config!")
-            this.config = this.setConfig(new Config(this.defaultStore.toString())) //if no config exists we make a new one w/ the default store directory
+            this.config = this.setConfig(new Config(this.storePath.toString())) //if no config exists we make a new one w/ the default store directory
         }
 
         //user storage is based off of the config file
-        this.userStore = this.config.library
+        this.userStore = this.config.libraryPath
         this.libraryJson = path.join(this.userStore, './library.json')
+
+        console.log("IO finished init")
+    }
+
+    public getConfig(): Config {
+        return this.config
     }
 
     //helper method to write config
@@ -62,22 +69,24 @@ export class IO {
 
     //copy a gif to userstore and return a file representing its metadata
     public importGif(loc: string): Gif {
-        const base = path.basename(loc)
-        const destination = IO.getUniqueSaveLoc(path.join(this.userStore.toString(), base))
-        fs.copyFileSync(loc, destination)
-        return new Gif(destination, base, Date.now()); //todo users should be able to specify a name
+        let base = path.basename(loc, 'gif')
+        base = base.substring(0, base.length - 1) //get rid of dot
+        const uniqueBase = this.getUniqueName(base)
+        console.log('name is ' + uniqueBase)
+        fs.copyFileSync(loc, path.join(this.userStore.toString(), uniqueBase))
+        return new Gif(uniqueBase, base, Date.now()); //todo users should be able to specify a name
     }
 
     //helper method to generate a unique file save location in userstore in case of duplicate names
-    private static getUniqueSaveLoc(destination: string): string {
-        if(fs.existsSync(destination)) {
-            //insert one zero
-            var baseNoDot = path.basename(destination, 'gif')
-            baseNoDot = baseNoDot.substring(0, baseNoDot.length - 1)
-            const extension = path.extname(destination)
-            return IO.getUniqueSaveLoc(path.join(path.dirname(destination), baseNoDot + '0' + extension)) //todo would be cool if this counted up (or was random) so mega reapeated gifs wouldn't hit file cap
+    private getUniqueName(base: string): string {
+        console.log(path.join(this.userStore.toString(), base + '.gif'))
+        if(!fs.existsSync(path.join(this.userStore.toString(), base + '.gif'))) return base + '.gif'
+        let addition = 0
+        console.log('dupe found!')
+        while(fs.existsSync(path.join(this.userStore.toString(), base + addition + '.gif'))) {
+            addition++
         }
-        return destination;
+        return base + addition + '.gif';
     }
 
     //self explanatory
@@ -90,5 +99,15 @@ export class IO {
         }
         
         return path
+    }
+
+    public addGif(gif: Gif): void {
+        const lib = this.getLibrary()
+        lib.gifs.unshift(gif) //addFirst equivalent
+        this.writeLibrary(lib)
+    }
+
+    public makePathFull(stub: string): string {
+        return path.join(this.userStore.toString(), stub)
     }
 }

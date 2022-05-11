@@ -3,8 +3,8 @@
     <head>
         <head>
             <meta charset="UTF-8">
-            <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-            <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: image/gif https:; script-src 'self'">
+            <!--todo security policy should not allow inline css-->
+            <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: image/gif https:; script-src 'self';">
             <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; img-src 'self' data: image/gif https:; script-src 'self'">
             <title>gifhaven</title>
             <link rel="stylesheet" href="./styles.css">
@@ -18,7 +18,7 @@
         <div></div>
         <input type="text" id="search" placeholder="Search your library...">
         <!-- TODO: users should be able to delete gifs -->
-        <div id ="display"></div> 
+        <div id ="display"></div>
 
         <!-- we place blur here so that every class before it is blurred as nessesary -->
         <div id="blur"></div>
@@ -31,6 +31,7 @@
         </div>
         <div id="settings" class="popup">
             Current library location: <span id="library-location"></span>
+            <input type="button" id="view-directory" value="Open">
             <input type="button" id="change-directory" value="Change">
             <input type="button" class="close-popup" value="Close"/>
         </div>

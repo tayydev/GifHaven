@@ -1,7 +1,7 @@
 export class Config {
-    readonly library: string
+    readonly libraryPath: string
     constructor(path: string) {
-        this.library = path;
+        this.libraryPath = path;
         //todo specify your own tenor key?
     }
 }
