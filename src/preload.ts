@@ -78,8 +78,8 @@ export class Preload {
                 this.io.addGif(gif)
                 Preload.updateGifs()
             },
-            open: (loc) => {
-                ipcRenderer.sendSync('open-loc')
+            openLib: () => {
+                ipcRenderer.sendSync('open-loc', this.io.getConfig().libraryPath.toString())
             },
             search: () => {
                 Preload.updateGifs()

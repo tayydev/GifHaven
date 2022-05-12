@@ -8,7 +8,7 @@ class Renderer {
 
         //special buttons
         document.getElementById('view-directory').addEventListener('click', () => {
-            win.api.open();
+            win.api.openLib();
         })
         document.getElementById('upload').addEventListener('click', () => {
             win.api.upload();

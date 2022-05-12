@@ -1,3 +1,4 @@
+import {ipcRenderer} from "electron";
 import {IO} from "./io"
 import {Display} from "./display";
 import {Gif} from "./data/gif";
@@ -6,14 +7,19 @@ export class LocalSearchableDisplay extends Display {
     private readonly search: HTMLInputElement //element to read search from
     private readonly popup: HTMLElement;
     private readonly blur: HTMLElement;
-    private readonly close: HTMLElement;
     constructor(output: HTMLElement, io: IO, search: HTMLInputElement) {
         super(output, io);
         this.search = search;
 
         this.popup = document.getElementById('tooltip')
         this.blur = document.getElementById('blur')
-        this.close = document.getElementById('close-gif')
+
+        document.getElementById('close-gif').addEventListener('click', () => {
+            this.hidePopup()
+        })
+        document.getElementById('open-gif').addEventListener('click', () => {
+            ipcRenderer.sendSync('open-loc', io.makePathFull(this.current.path))
+        })
     }
 
     public draw() {
@@ -57,17 +63,13 @@ export class LocalSearchableDisplay extends Display {
             button.style.visibility = 'hidden'
         })
 
-        //update gif popup
+        //add button behavior
         button.addEventListener('click', () => {
-            const text: HTMLInputElement = document.getElementById('rename-gif') as HTMLInputElement
-            text.value = gif.name
+            this.current = gif; //set global gif value for the shared gif popup
 
-            this.current = gif
-            this.showPopup()
-        })
-
-        this.close.addEventListener('click', () => {
-            this.hidePopup()
+            //update shared popup text
+            (document.getElementById('rename-gif') as HTMLInputElement).value = this.current.name;
+            this.showPopup() //show popup
         })
     }
 

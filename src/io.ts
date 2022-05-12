@@ -32,7 +32,7 @@ export class IO {
         this.userStore = this.config.libraryPath
         this.libraryJson = path.join(this.userStore, './library.json')
 
-        console.log("IO finished init")
+        console.log("IO finished init") //todo io should verify the authenticity of every gif in the library on startup. probably ignore but don't delete missing gifs (but think about how this screws with dupe names)
     }
 
     public getConfig(): Config {

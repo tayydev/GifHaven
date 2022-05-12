@@ -1,7 +1,7 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import * as path from 'path'
 
-var win: BrowserWindow
+let win: BrowserWindow;
 
 //create a new default window
 const createWindow = () => {
@@ -31,8 +31,10 @@ ipcMain.on('reload', (event, arg) => {
     event.returnValue = true
 });
 ipcMain.on('open-loc', (event, arg) => {
-    console.log('Placeholder open!')
-    event.returnValue = null
+    console.log('show')
+    console.log(arg)
+    shell.showItemInFolder(arg)
+    event.returnValue = true
 })
 ipcMain.on('select-file', (event, arg) => {
     event.returnValue = dialog.showOpenDialogSync(win, {
