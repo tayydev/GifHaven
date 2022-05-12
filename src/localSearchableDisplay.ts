@@ -1,13 +1,19 @@
-import { IO } from "./io"
+import {IO} from "./io"
 import {Display} from "./display";
 import {Gif} from "./data/gif";
 
 export class LocalSearchableDisplay extends Display {
-    private readonly search: HTMLInputElement //element to read search filters from
+    private readonly search: HTMLInputElement //element to read search from
+    private readonly popup: HTMLElement;
+    private readonly blur: HTMLElement;
+    private readonly close: HTMLElement;
     constructor(output: HTMLElement, io: IO, search: HTMLInputElement) {
         super(output, io);
-
         this.search = search;
+
+        this.popup = document.getElementById('tooltip')
+        this.blur = document.getElementById('blur')
+        this.close = document.getElementById('close-gif')
     }
 
     public draw() {
@@ -31,23 +37,52 @@ export class LocalSearchableDisplay extends Display {
         button.type = 'button'
         button.value = 'Options'
         button.classList.add('gif-button')
+        button.setAttribute('data-path', gif.path)
 
         const img = super.makeImg(gif);
 
         div.appendChild(img)
         div.appendChild(button)
 
-        this.applyGifListener(div, button)
+        this.applyGifListeners(div, button, gif)
 
         return div
     }
 
-    private applyGifListener(div: HTMLElement, button: HTMLButtonElement) {
+    private applyGifListeners(div: HTMLElement, button: HTMLButtonElement, gif: Gif) {
         div.addEventListener('mouseenter', () => {
             button.style.visibility = 'visible'
         })
         div.addEventListener('mouseleave', () => {
             button.style.visibility = 'hidden'
         })
+
+        //update gif popup
+        button.addEventListener('click', () => {
+            const text: HTMLInputElement = document.getElementById('rename-gif') as HTMLInputElement
+            text.value = gif.name
+
+            this.current = gif
+            this.showPopup()
+        })
+
+        this.close.addEventListener('click', () => {
+            this.hidePopup()
+        })
+    }
+
+    public showPopup() {
+        this.blur.style.visibility = 'visible';
+        this.popup.style.visibility = 'visible';
+    }
+
+    public hidePopup() {
+        this.blur.style.visibility = 'hidden';
+        this.popup.style.visibility = 'hidden';
+    }
+
+    private current: Gif = null;
+    public getCurrent(): Gif {
+        return this.current;
     }
 }

@@ -72,21 +72,20 @@ export class IO {
         let base = path.basename(loc, 'gif')
         base = base.substring(0, base.length - 1) //get rid of dot
         const uniqueBase = this.getUniqueName(base)
-        console.log('name is ' + uniqueBase)
-        fs.copyFileSync(loc, path.join(this.userStore.toString(), uniqueBase))
-        return new Gif(uniqueBase, base, Date.now()); //todo users should be able to specify a name
+        fs.copyFileSync(loc, path.join(this.userStore.toString(), uniqueBase + '.gif'))
+        return new Gif(uniqueBase + '.gif', uniqueBase, Date.now()); //todo users should be able to specify a name
     }
 
     //helper method to generate a unique file save location in userstore in case of duplicate names
     private getUniqueName(base: string): string {
         console.log(path.join(this.userStore.toString(), base + '.gif'))
-        if(!fs.existsSync(path.join(this.userStore.toString(), base + '.gif'))) return base + '.gif'
+        if(!fs.existsSync(path.join(this.userStore.toString(), base + '.gif'))) return base
         let addition = 0
         console.log('dupe found!')
         while(fs.existsSync(path.join(this.userStore.toString(), base + addition + '.gif'))) {
             addition++
         }
-        return base + addition + '.gif';
+        return base + addition;
     }
 
     //self explanatory
@@ -109,5 +108,12 @@ export class IO {
 
     public makePathFull(stub: string): string {
         return path.join(this.userStore.toString(), stub)
+    }
+
+    public deleteGif(gif: Gif) {
+        const lib = this.getLibrary()
+        lib.gifs = lib.gifs.filter(temp => temp.path != gif.path)
+        fs.unlinkSync(path.join(this.userStore.toString(), gif.path))
+        this.writeLibrary(lib)
     }
 }

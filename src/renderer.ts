@@ -16,6 +16,9 @@ class Renderer {
         document.getElementById('change-directory').addEventListener('click', () => {
             win.api.changeLibraryLocation();
         })
+        document.getElementById('delete-gif').addEventListener('click', () => {
+            win.api.deleteGif()
+        })
 
         //search
         document.getElementById('search').addEventListener('input', () => {
@@ -58,26 +61,36 @@ class Renderer {
     }
 
     private static currentPopup: HTMLElement = null;
+    private static blur: HTMLElement = null;
     private static initPopups() {
-        const blur = document.getElementById('blur')
+        this.blur = document.getElementById('blur');
 
         const popups = document.querySelectorAll("[id^=open]") //selects any div with open in the name
         popups.forEach(popup => {
             const id = popup.id.replace("open-", "") //find parent by removing open
             const parent = document.getElementById(id)
             popup.addEventListener('click', () => {
-                blur.style.visibility = 'visible';
-                parent.style.visibility = 'visible';
-                this.currentPopup = parent
+                this.show(parent)
             })
         })
 
         const closes = Object.values(document.getElementsByClassName('close-popup'))
         closes.forEach(close => {
             close.addEventListener('click', () => {
-                blur.style.visibility = 'hidden';
-                this.currentPopup.style.visibility = 'hidden';
+                this.hide()
             })
         })
+    }
+
+    private static show(element: HTMLElement) {
+        this.blur.style.visibility = 'visible';
+        element.style.visibility = 'visible';
+        this.currentPopup = element
+
+    }
+
+    private static hide() {
+        this.blur.style.visibility = 'hidden';
+        this.currentPopup.style.visibility = 'hidden';
     }
 }

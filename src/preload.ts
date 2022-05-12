@@ -8,7 +8,7 @@ import { TenorPane } from './tenorPane';
 window.addEventListener('DOMContentLoaded', () => {
     Preload.init()
 })
-class Preload {
+export class Preload {
     private static io = new IO()
     private static display: LocalSearchableDisplay
     private static search: TenorPane
@@ -43,7 +43,7 @@ class Preload {
         if(element) element.innerHTML = content
     }
 
-    private static updateGifs() {
+    public static updateGifs() {
         this.display.draw()
 
         //attach file drags
@@ -86,6 +86,13 @@ class Preload {
             },
             onlineSearch: (text) => {
                 this.search.drawTenor(text)
+            },
+            deleteGif: () => {
+                const localGif = this.display.getCurrent()
+                this.io.deleteGif(localGif)
+                Preload.updateGifs()
+
+                this.display.hidePopup() //todo instead of hiding we should change to an undo screen
             }
         })
     }

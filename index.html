@@ -3,7 +3,6 @@
     <head>
         <head>
             <meta charset="UTF-8">
-            <!--todo security policy should not allow inline css-->
             <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: image/gif https:; script-src 'self';">
             <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; img-src 'self' data: image/gif https:; script-src 'self'">
             <title>gifhaven</title>
@@ -17,7 +16,6 @@
         <input type="button" id="open-settings" value="Settings"/>
         <div></div>
         <input type="text" id="search" placeholder="Search your library...">
-        <!-- TODO: users should be able to delete gifs -->
         <div id ="display"></div>
 
         <!-- we place blur here so that every class before it is blurred as nessesary -->
@@ -44,6 +42,11 @@
                     <div id="search-results"></div>
                 </div>
             </div>
+        </div>
+        <div id="tooltip" class="popup">
+            <input type="text" id="rename-gif" value="RENAME THIS">
+            <input type="button" id="delete-gif" value="Delete Gif">
+            <input type="button" id="close-gif" value="Close"/>
         </div>
     </body>
 </html>
