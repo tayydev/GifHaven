@@ -12,14 +12,20 @@ img.gif {
 .gif-container {
     position: relative;
 }
+.hover {
+    visibility: hidden;
+}
 .gif-button {
     position: absolute;
     width: 10%;
     height: 10%;
     bottom: 8px;
     right: 4px;
-
-    visibility: hidden;
+}
+.gif-label {
+    position: absolute;
+    top: 8px;
+    left: 4px;
 }
 .popup {
     visibility: hidden; /* popups are invisible by default */

@@ -48,7 +48,7 @@ ipcMain.on('select-directory', (event, arg) => {
     event.returnValue =  dialog.showOpenDialogSync(win, {
         message: 'Select a directory for your gif library',
         defaultPath: arg, //io passes us a default directory (in this case %appdata%/roaming/gifhaven/store)
-        properties: ['openDirectory'] //todo support multi files
+        properties: ['openDirectory']
     })
 })
 ipcMain.on('ondragstart', (event, dir) => {

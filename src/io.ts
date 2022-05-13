@@ -116,4 +116,15 @@ export class IO {
         fs.unlinkSync(path.join(this.userStore.toString(), gif.path))
         this.writeLibrary(lib)
     }
+
+    public rename(gif: Gif, name: string): Gif {
+        const lib = this.getLibrary()
+        const newGif = new Gif(gif.path, name, gif.timestamp, gif.link) //dupe existing w/ new name
+
+        lib.gifs = lib.gifs.filter(temp => temp.path != gif.path) //remove existing gif
+        lib.gifs.unshift(newGif) //add renamed gif
+        this.writeLibrary(lib) //write
+
+        return newGif //return updated gif
+    }
 }

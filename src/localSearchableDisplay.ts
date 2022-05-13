@@ -7,12 +7,14 @@ export class LocalSearchableDisplay extends Display {
     private readonly search: HTMLInputElement //element to read search from
     private readonly popup: HTMLElement;
     private readonly blur: HTMLElement;
+    private readonly rename: HTMLButtonElement
     constructor(output: HTMLElement, io: IO, search: HTMLInputElement) {
         super(output, io);
         this.search = search;
 
         this.popup = document.getElementById('tooltip')
         this.blur = document.getElementById('blur')
+        this.rename = document.getElementById('rename-gif') as HTMLInputElement
 
         document.getElementById('close-gif').addEventListener('click', () => {
             this.hidePopup()
@@ -20,12 +22,16 @@ export class LocalSearchableDisplay extends Display {
         document.getElementById('open-gif').addEventListener('click', () => {
             ipcRenderer.sendSync('open-loc', io.makePathFull(this.current.path))
         })
+        document.getElementById('confirm-gif').addEventListener('click', () => {
+            this.io.rename(this.current, this.rename.value)
+            this.draw()
+        })
     }
 
     public draw() {
         const text = this.search.value
         console.log(text)
-        const filter = new RegExp(text) //todo bad if search value is nothing
+        const filter = new RegExp(this.search.value, 'i') //no g flag (stateful cringe)
 
         const gifs = this.io.getLibrary().gifs
             .sort((a, b) => b.timestamp - a.timestamp) //reverse chronological
@@ -36,26 +42,54 @@ export class LocalSearchableDisplay extends Display {
 
 
     protected override makeImg(gif: Gif): HTMLElement {
-        const div = document.createElement('div')
-        div.classList.add('gif-container')
+        const hover = document.createElement('div') //everything that appears on hover
+        hover.classList.add('hover')
 
-        const button = document.createElement('input')
-        button.type = 'button'
-        button.value = 'Options'
+        const label = this.makeLabel(gif)
+
+        const button = document.createElement('input') //button for more details
         button.classList.add('gif-button')
         button.setAttribute('data-path', gif.path)
+        button.type = 'button'
+        button.value = 'Options'
 
-        const img = super.makeImg(gif);
+        //add to hover
+        hover.appendChild(label)
+        hover.appendChild(button)
 
+        const img = super.makeImg(gif); //gif object
+
+        const div = document.createElement('div') //all objects including image
+        div.classList.add('gif-container')
         div.appendChild(img)
-        div.appendChild(button)
+        div.appendChild(hover)
 
-        this.applyGifListeners(div, button, gif)
+
+        this.applyGifListeners(div, hover, gif)
 
         return div
     }
 
-    private applyGifListeners(div: HTMLElement, button: HTMLButtonElement, gif: Gif) {
+    private makeLabel(gif: Gif): HTMLElement {
+        const label = document.createElement('div') //label
+        label.classList.add('gif-label')
+        label.innerHTML = gif.name + ' - ' + gif.path
+        if(this.search.value == "") return label //if no search then we keep going
+
+        //we are searching
+        label.style.visibility = 'visible' //lock visible
+
+        //highlight test
+        const string = gif.name
+        const regexp = new RegExp(this.search.value, 'ig') //g flag makes this stateful
+        const matches: RegExpMatchArray = string.matchAll(regexp).next().value;
+        for (const match of matches) {
+            label.innerHTML = label.innerHTML.replace(match, '<mark>' + match + '</mark>')
+        }
+
+        return label
+    }
+    private applyGifListeners(div: HTMLElement, button: HTMLElement, gif: Gif) {
         div.addEventListener('mouseenter', () => {
             button.style.visibility = 'visible'
         })
@@ -68,7 +102,7 @@ export class LocalSearchableDisplay extends Display {
             this.current = gif; //set global gif value for the shared gif popup
 
             //update shared popup text
-            (document.getElementById('rename-gif') as HTMLInputElement).value = this.current.name;
+            this.rename.value = this.current.name;
             this.showPopup() //show popup
         })
     }
