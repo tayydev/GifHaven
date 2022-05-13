@@ -26,6 +26,13 @@ export class LocalSearchableDisplay extends Display {
             this.io.rename(this.current, this.rename.value)
             this.draw()
         })
+        this.rename.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') { //listen for enter keys in rename box
+                this.io.rename(this.current, this.rename.value)
+                this.draw()
+                this.hidePopup() //an enter press means you are done setting name
+            }
+        });
     }
 
     public draw() {
@@ -64,8 +71,8 @@ export class LocalSearchableDisplay extends Display {
         div.appendChild(img)
         div.appendChild(hover)
 
-
-        this.applyGifListeners(div, hover, gif)
+        this.addHoverListeners(div, hover)
+        this.addButtonListeners(button, gif)
 
         return div
     }
@@ -73,7 +80,7 @@ export class LocalSearchableDisplay extends Display {
     private makeLabel(gif: Gif): HTMLElement {
         const label = document.createElement('div') //label
         label.classList.add('gif-label')
-        label.innerHTML = gif.name + ' - ' + gif.path
+        label.innerHTML = gif.name + ' - ' + gif.path //todo html injection
         if(this.search.value == "") return label //if no search then we keep going
 
         //we are searching
@@ -84,20 +91,21 @@ export class LocalSearchableDisplay extends Display {
         const regexp = new RegExp(this.search.value, 'ig') //g flag makes this stateful
         const matches: RegExpMatchArray = string.matchAll(regexp).next().value;
         for (const match of matches) {
-            label.innerHTML = label.innerHTML.replace(match, '<mark>' + match + '</mark>')
+            label.innerHTML = label.innerHTML.replace(match, '<mark>' + match + '</mark>') //todo html injection
         }
 
         return label
     }
-    private applyGifListeners(div: HTMLElement, button: HTMLElement, gif: Gif) {
+    private addHoverListeners(div: HTMLElement, button: HTMLElement) {
         div.addEventListener('mouseenter', () => {
             button.style.visibility = 'visible'
         })
         div.addEventListener('mouseleave', () => {
             button.style.visibility = 'hidden'
         })
+    }
 
-        //add button behavior
+    private addButtonListeners(button: HTMLInputElement, gif: Gif) {
         button.addEventListener('click', () => {
             this.current = gif; //set global gif value for the shared gif popup
 
@@ -106,8 +114,7 @@ export class LocalSearchableDisplay extends Display {
             this.showPopup() //show popup
         })
     }
-
-    public showPopup() {
+    private showPopup() {
         this.blur.style.visibility = 'visible';
         this.popup.style.visibility = 'visible';
     }
