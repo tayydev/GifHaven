@@ -50,13 +50,12 @@ class Renderer {
             console.log('File has left the Drop Space');
         });
 
-        //online search
+        //online search todo can i just throw this in preload anyway???
         let timer;
         const waitTime = 250 //quarter of a second
         document.getElementById('online-search').addEventListener('input', () => {
             clearTimeout(timer)
-            const text = (document.getElementById('online-search') as HTMLInputElement).value
-            timer = setTimeout(() => win.api.onlineSearch(text), waitTime)
+            timer = setTimeout(() => win.api.onlineSearch(), waitTime)
         })
     }
 

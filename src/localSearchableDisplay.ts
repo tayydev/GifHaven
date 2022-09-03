@@ -1,10 +1,10 @@
 import {ipcRenderer} from "electron";
 import {IO} from "./io"
 import {Display} from "./display";
-import {Gif} from "./data/gif";
+import {LocalGif} from "./data/localGif";
 
 export class LocalSearchableDisplay extends Display {
-    private readonly search: HTMLInputElement //element to read search from
+    private readonly search: HTMLInputElement; //element to read search from
     private readonly popup: HTMLElement;
     private readonly blur: HTMLElement;
     private readonly rename: HTMLButtonElement
@@ -48,7 +48,7 @@ export class LocalSearchableDisplay extends Display {
     }
 
 
-    protected override makeImg(gif: Gif): HTMLElement {
+    protected override makeImg(gif: LocalGif): HTMLElement {
         const hover = document.createElement('div') //everything that appears on hover
         hover.classList.add('hover')
 
@@ -77,7 +77,7 @@ export class LocalSearchableDisplay extends Display {
         return div
     }
 
-    private makeLabel(gif: Gif): HTMLElement {
+    private makeLabel(gif: LocalGif): HTMLElement {
         const label = document.createElement('div') //label
         label.classList.add('gif-label')
         label.innerHTML = gif.name + ' - ' + gif.path //todo html injection
@@ -105,7 +105,7 @@ export class LocalSearchableDisplay extends Display {
         })
     }
 
-    private addButtonListeners(button: HTMLInputElement, gif: Gif) {
+    private addButtonListeners(button: HTMLInputElement, gif: LocalGif) {
         button.addEventListener('click', () => {
             this.current = gif; //set global gif value for the shared gif popup
 
@@ -124,8 +124,8 @@ export class LocalSearchableDisplay extends Display {
         this.popup.style.visibility = 'hidden';
     }
 
-    private current: Gif = null;
-    public getCurrent(): Gif {
+    private current: LocalGif = null;
+    public getCurrent(): LocalGif {
         return this.current;
     }
 }

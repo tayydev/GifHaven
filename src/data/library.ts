@@ -1,7 +1,7 @@
-import { Gif } from "./gif"
+import { LocalGif } from "./localGif"
 
 export class Library {
-    gifs: Gif[]
+    gifs: LocalGif[]
     constructor() {
         this.gifs = []
     }

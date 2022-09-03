@@ -1,5 +1,5 @@
-import {Gif} from "./data/gif";
 import {IO} from "./io";
+import {Drawable} from "./data/drawable";
 
 export class Display {
     private readonly output: HTMLElement
@@ -10,17 +10,20 @@ export class Display {
         this.io = io;
     }
 
-    protected draw(sources: Gif[]) {
+    protected draw(sources: Drawable[]) {
+        console.log("sources " + sources)
         Display.removeChildren(this.output) //clear children
         sources.forEach(gif => {
             this.output.appendChild(this.makeImg(gif))
         })
     }
 
-    protected makeImg(gif: Gif): HTMLElement {
+    protected makeImg(drawable: Drawable): HTMLElement {
+        console.log('drawble found' + drawable)
+
         const img = document.createElement('img')
-        img.src = this.io.makePathFull(gif.path)
-        img.setAttribute('data-path', gif.path)
+        img.src = this.io.makePathFull(drawable.path)
+        img.setAttribute('data-path', drawable.path)
         img.classList.add('gif')
 
         return img

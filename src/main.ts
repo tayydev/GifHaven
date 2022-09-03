@@ -57,6 +57,6 @@ ipcMain.on('ondragstart', (event, dir) => {
 
     event.sender.startDrag({
         file: dir,
-        icon: path.join(__dirname, '../../img/dragIcon.png') //todo this icon sucks
+        icon: path.join(__dirname, '../../img/dragIcon.png') //todo this icon sucks todo loading is also temp
     })
 })

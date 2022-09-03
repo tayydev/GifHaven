@@ -3,7 +3,7 @@ import { LocalSearchableDisplay } from './localSearchableDisplay'
 import { version as appVersion } from '../package.json' //read version from json
 import { contextBridge, ipcRenderer } from 'electron';
 import { IO } from './io';
-import { TenorPane } from './tenorPane';
+import {TenorDisplay} from "./tenorDisplay";
 //run on load
 window.addEventListener('DOMContentLoaded', () => {
     Preload.init()
@@ -11,16 +11,18 @@ window.addEventListener('DOMContentLoaded', () => {
 export class Preload {
     private static io = new IO()
     private static display: LocalSearchableDisplay
-    private static search: TenorPane
+    private static tenor: TenorDisplay
 
     public static init() {
         this.display = new LocalSearchableDisplay(
             document.getElementById('display'),
             this.io,
-            document.getElementById('search') as HTMLInputElement,
+            document.getElementById('search') as HTMLInputElement
         );
-        this.search = new TenorPane(
-            document.getElementById('search-results')
+        this.tenor = new TenorDisplay(
+            document.getElementById('search-results'),
+            this.io,
+            document.getElementById('online-search') as HTMLInputElement
         );
 
         Preload.versionInjection()
@@ -85,7 +87,7 @@ export class Preload {
                 Preload.updateGifs()
             },
             onlineSearch: (text) => {
-                this.search.drawTenor(text)
+                this.tenor.draw()
             },
             deleteGif: () => {
                 const localGif = this.display.getCurrent()

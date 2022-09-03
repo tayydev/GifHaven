@@ -2,8 +2,9 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { ipcRenderer } from 'electron';
 import { Library } from './data/library';
-import { Gif } from './data/gif';
+import { LocalGif } from './data/localGif';
 import { Config } from './data/config';
+import imageSize from "image-size";
 
 export class IO {
     private readonly homePath: fs.PathLike;
@@ -32,6 +33,7 @@ export class IO {
         this.userStore = this.config.libraryPath
         this.libraryJson = path.join(this.userStore, './library.json')
 
+        //todo app crashes on corrupt gif
         console.log("IO finished init") //todo io should verify the authenticity of every gif in the library on startup. probably ignore but don't delete missing gifs (but think about how this screws with dupe names)
     }
 
@@ -68,12 +70,20 @@ export class IO {
     }
 
     //copy a gif to userstore and return a file representing its metadata
-    public importGif(loc: string): Gif {
+    public importGif(loc: string): LocalGif { //todo users should be able to specify a name
         let base = path.basename(loc, 'gif')
         base = base.substring(0, base.length - 1) //get rid of dot
-        const uniqueBase = this.getUniqueName(base)
-        fs.copyFileSync(loc, path.join(this.userStore.toString(), uniqueBase + '.gif'))
-        return new Gif(uniqueBase + '.gif', uniqueBase, Date.now()); //todo users should be able to specify a name
+        const uniqueBase = this.getUniqueName(base) //make unique name
+        const destPath = path.join(this.userStore.toString(), uniqueBase + '.gif') //turn that base into unique dest
+        fs.copyFileSync(loc, destPath) //copy to dest
+        const size = imageSize(destPath)
+        return new LocalGif(
+            uniqueBase + '.gif',
+            size.width,
+            size.height,
+            uniqueBase,
+            Date.now()
+        );
     }
 
     //helper method to generate a unique file save location in userstore in case of duplicate names
@@ -100,7 +110,7 @@ export class IO {
         return path
     }
 
-    public addGif(gif: Gif): void {
+    public addGif(gif: LocalGif): void {
         const lib = this.getLibrary()
         lib.gifs.unshift(gif) //addFirst equivalent
         this.writeLibrary(lib)
@@ -110,16 +120,16 @@ export class IO {
         return path.join(this.userStore.toString(), stub)
     }
 
-    public deleteGif(gif: Gif) {
+    public deleteGif(gif: LocalGif) {
         const lib = this.getLibrary()
         lib.gifs = lib.gifs.filter(temp => temp.path != gif.path)
         fs.unlinkSync(path.join(this.userStore.toString(), gif.path))
         this.writeLibrary(lib)
     }
 
-    public rename(gif: Gif, name: string): Gif {
+    public rename(gif: LocalGif, name: string): LocalGif {
         const lib = this.getLibrary()
-        const newGif = new Gif(gif.path, name, gif.timestamp, gif.link) //dupe existing w/ new name
+        const newGif = new LocalGif(gif.path, gif.width, gif.height, name, gif.timestamp, gif.link) //dupe existing w/ new name
 
         lib.gifs = lib.gifs.filter(temp => temp.path != gif.path) //remove existing gif
         lib.gifs.unshift(newGif) //add renamed gif
