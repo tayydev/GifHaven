@@ -86,7 +86,7 @@ export class Preload {
             search: () => {
                 Preload.updateGifs()
             },
-            onlineSearch: (text) => {
+            onlineSearch: () => {
                 this.tenor.draw()
             },
             deleteGif: () => {
